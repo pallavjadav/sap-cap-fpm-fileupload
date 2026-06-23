@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@cap-js/hana": "^2",
+    "@cap-js/notifications": "^0.3.0",
     "@sap/cds": "^9",
     "@sap/hana-client": "^2.29.23",
     "@sap/xssec": "^4",
@@ -31,7 +32,9 @@
         "auth": "xsuaa"
       },
       "html5-repo": true,
-      "application-logging": true
+      "application-logging": true,
+      "destinations": true,
+      "workzone": true
     },
     "hana": {
       "deploy-format": "hdbtable"

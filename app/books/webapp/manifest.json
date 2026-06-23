@@ -1,175 +1,179 @@
 {
-  "_version": "1.85.0",
-  "sap.app": {
-    "id": "books",
-    "type": "application",
-    "i18n": "i18n/i18n.properties",
-    "applicationVersion": {
-      "version": "0.0.1"
-    },
-    "title": "{{appTitle}}",
-    "description": "{{appDescription}}",
-    "resources": "resources.json",
-    "sourceTemplate": {
-      "id": "@sap/generator-fiori:fpm",
-      "version": "1.27.0",
-      "toolsId": "84a2416d-2be1-4b6e-af12-b1ab970b411b"
-    },
-    "dataSources": {
-      "mainService": {
-        "uri": "/odata/v4/my-books/",
-        "type": "OData",
-        "settings": {
-          "annotations": [],
-          "odataVersion": "4.0"
-        }
-      }
-    },
-    "crossNavigation": {
-      "inbounds": {
-        "Books-manage": {
-          "semanticObject": "Books",
-          "action": "manage",
-          "title": "{{Books-manage.flpTitle}}",
-          "signature": {
-            "parameters": {},
-            "additionalParameters": "allowed"
-          }
-        }
-      }
-    }
+ "_version": "1.85.0",
+ "sap.app": {
+  "id": "books",
+  "type": "application",
+  "i18n": "i18n/i18n.properties",
+  "applicationVersion": {
+   "version": "0.0.1"
   },
-  "sap.ui": {
-    "technology": "UI5",
-    "icons": {
-      "icon": "",
-      "favIcon": "",
-      "phone": "",
-      "phone@2": "",
-      "tablet": "",
-      "tablet@2": ""
-    },
-    "deviceTypes": {
-      "desktop": true,
-      "tablet": true,
-      "phone": true
-    }
+  "title": "{{appTitle}}",
+  "description": "{{appDescription}}",
+  "resources": "resources.json",
+  "sourceTemplate": {
+   "id": "@sap/generator-fiori:fpm",
+   "version": "1.27.0",
+   "toolsId": "84a2416d-2be1-4b6e-af12-b1ab970b411b"
   },
-  "sap.ui5": {
-    "flexEnabled": true,
-    "dependencies": {
-      "minUI5Version": "1.149.0",
-      "libs": {
-        "sap.m": {},
-        "sap.ui.core": {},
-        "sap.fe.core": {},
-        "sap.fe.macros": {}
-      }
-    },
-    "contentDensities": {
-      "compact": true,
-      "cozy": true
-    },
-    "models": {
-      "i18n": {
-        "type": "sap.ui.model.resource.ResourceModel",
-        "settings": {
-          "bundleName": "books.i18n.i18n"
-        }
-      },
-      "": {
-        "dataSource": "mainService",
-        "preload": true,
-        "settings": {
-          "operationMode": "Server",
-          "autoExpandSelect": true,
-          "earlyRequests": true
-        }
-      },
-      "@i18n": {
-        "type": "sap.ui.model.resource.ResourceModel",
-        "uri": "i18n/i18n.properties"
-      }
-    },
-    "resources": {
-      "css": []
-    },
-    "routing": {
-      "config": {},
-      "routes": [
-        {
-          "name": "BooksMain",
-          "pattern": ":?query:",
-          "target": "BooksMain"
-        },
-        {
-          "name": "Files",
-          "pattern": "Files",
-          "target": "Files"
-        },
-       {
-        "pattern": "Files({key}):?query:",
-        "name": "FilesObjectPage",
-        "target": "FilesObjectPage"
-      }
-      ],
-      "targets": {
-        "BooksMain": {
-          "type": "Component",
-          "id": "BooksMain",
-          "name": "sap.fe.core.fpm",
-          "options": {
-            "settings": {
-              "navigation": {
-                "Files": {
-                  "detail": {
-                    "route": "Files"
-                  }
-                }
-              },
-              "contextPath": "/Books",
-              "viewName": "books.ext.view.Main"
-            }
-          }
-        },
-        "Files": {
-          "type": "Component",
-          "id": "Files",
-          "name": "sap.fe.templates.ListReport",
-          "options": {
-            "settings": {
-              "contextPath": "/Files",
-              "viewName": "books.ext.view.UploadExcel",
-              "navigation": {
-                "Files": {
-                  "detail": {
-                    "route": "FilesObjectPage"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "FilesObjectPage": {
-          "type": "Component",
-          "id": "FilesObjectPage",
-          "name": "sap.fe.templates.ObjectPage",
-          "options": {
-            "settings": {
-              "editableHeaderContent": false,
-              "contextPath": "/Files"
-            }
-          }
-        }
-      }
+  "dataSources": {
+   "mainService": {
+    "uri": "/odata/v4/my-books/",
+    "type": "OData",
+    "settings": {
+     "annotations": [],
+     "odataVersion": "4.0"
     }
+   }
   },
-  "sap.fe": {
-    "app": {
-      "enableLazyLoading": true,
-      "hideDraft": {
-        "enabled": false
-      }
+  "crossNavigation": {
+   "inbounds": {
+    "Books-manage": {
+     "semanticObject": "Books",
+     "action": "manage",
+     "title": "{{Books-manage.flpTitle}}",
+     "signature": {
+      "parameters": {},
+      "additionalParameters": "allowed"
+     }
     }
+   }
   }
+ },
+ "sap.ui": {
+  "technology": "UI5",
+  "icons": {
+   "icon": "",
+   "favIcon": "",
+   "phone": "",
+   "phone@2": "",
+   "tablet": "",
+   "tablet@2": ""
+  },
+  "deviceTypes": {
+   "desktop": true,
+   "tablet": true,
+   "phone": true
+  }
+ },
+ "sap.ui5": {
+  "flexEnabled": true,
+  "dependencies": {
+   "minUI5Version": "1.149.0",
+   "libs": {
+    "sap.m": {},
+    "sap.ui.core": {},
+    "sap.fe.core": {},
+    "sap.fe.macros": {}
+   }
+  },
+  "contentDensities": {
+   "compact": true,
+   "cozy": true
+  },
+  "models": {
+   "i18n": {
+    "type": "sap.ui.model.resource.ResourceModel",
+    "settings": {
+     "bundleName": "books.i18n.i18n"
+    }
+   },
+   "": {
+    "dataSource": "mainService",
+    "preload": true,
+    "settings": {
+     "operationMode": "Server",
+     "autoExpandSelect": true,
+     "earlyRequests": true
+    }
+   },
+   "@i18n": {
+    "type": "sap.ui.model.resource.ResourceModel",
+    "uri": "i18n/i18n.properties"
+   }
+  },
+  "resources": {
+   "css": []
+  },
+  "routing": {
+   "config": {},
+   "routes": [
+    {
+     "name": "BooksMain",
+     "pattern": ":?query:",
+     "target": "BooksMain"
+    },
+    {
+     "name": "Files",
+     "pattern": "Files",
+     "target": "Files"
+    },
+    {
+     "pattern": "Files({key}):?query:",
+     "name": "FilesObjectPage",
+     "target": "FilesObjectPage"
+    }
+   ],
+   "targets": {
+    "BooksMain": {
+     "type": "Component",
+     "id": "BooksMain",
+     "name": "sap.fe.core.fpm",
+     "options": {
+      "settings": {
+       "navigation": {
+        "Files": {
+         "detail": {
+          "route": "Files"
+         }
+        }
+       },
+       "contextPath": "/Books",
+       "viewName": "books.ext.view.Main"
+      }
+     }
+    },
+    "Files": {
+     "type": "Component",
+     "id": "Files",
+     "name": "sap.fe.templates.ListReport",
+     "options": {
+      "settings": {
+       "contextPath": "/Files",
+       "viewName": "books.ext.view.UploadExcel",
+       "navigation": {
+        "Files": {
+         "detail": {
+          "route": "FilesObjectPage"
+         }
+        }
+       }
+      }
+     }
+    },
+    "FilesObjectPage": {
+     "type": "Component",
+     "id": "FilesObjectPage",
+     "name": "sap.fe.templates.ObjectPage",
+     "options": {
+      "settings": {
+       "editableHeaderContent": false,
+       "contextPath": "/Files"
+      }
+     }
+    }
+   }
+  }
+ },
+ "sap.fe": {
+  "app": {
+   "enableLazyLoading": true,
+   "hideDraft": {
+    "enabled": false
+   }
+  }
+ },
+ "sap.cloud": {
+  "public": true,
+  "service": "fileuploadfpm.service"
+ }
 }

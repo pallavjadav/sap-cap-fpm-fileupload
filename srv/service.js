@@ -86,7 +86,14 @@ module.exports = cds.service.impl(function () {
             );
 
             console.log(`Successfully inserted ${entries.length} records`);
-
+            
+            const alert = await cds.connect.to('notifications')
+            alert.notify({
+                recipients: ["pallavjadav@gmail.com"],
+                priority: "HIGH",
+                title: "New Excel Upload",
+                description: "A New Excel file has been uploaded and processed successfully."
+            })
             // Persist uploaded file metadata/content
             return next();
 
