@@ -1,0 +1,14 @@
+<mvc:View xmlns:table="sap.fe.macros.table" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="books.ext.view.Main">
+    <Page id="Main" title="{i18n>MainTitle}">
+        <content>
+            <macros:FilterBar id="FilterBar" metaPath="/Books/@com.sap.vocabularies.UI.v1.SelectionFields#filterBarMacro" showClearButton="true" showMessages="true"/>
+            <macros:Table id="Table" metaPath="/Books/@com.sap.vocabularies.UI.v1.LineItem#tableMacro" filterBar="FilterBar" header="My Books" type="GridTable" selectionMode="ForceMulti">
+                <macros:actions>
+                    <table:Action text="Create" visible="true" key="create" press="create" id="createButton"/>
+                    <table:Action text="ExcelUpload" visible="true" key="upload" press="upload" id="excelUpload"/>
+                    <!-- <table:Action text="Mass Upload" visible="true" key="massupload" press="massupload" id="massupload" /> -->
+                </macros:actions>
+            </macros:Table>
+        </content>
+    </Page>
+</mvc:View>

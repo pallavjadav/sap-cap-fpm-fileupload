@@ -1,0 +1,104 @@
+_schema-version: 3.3.0
+ID: fileuploadfpm
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: fileuploadfpm-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: fileuploadfpm-auth
+  - name: fileuploadfpm-logging
+  - name: fileuploadfpm-db
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: fileuploadfpm-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: fileuploadfpm-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: fileuploadfpm-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: fileuploadfpm-html5-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - books.zip
+      name: books
+      target-path: resources/
+- name: books
+  type: html5
+  path: app/books
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: fileuploadfpm-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: fileuploadfpm-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: fileuploadfpm-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+- name: fileuploadfpm-logging
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: application-logs
+    service-plan: standard
+- name: fileuploadfpm-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: fileuploadfpm-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: fileuploadfpm-destination-service
+    service-plan: lite
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
