@@ -1,169 +1,183 @@
 _schema-version: 3.3.0
 ID: fileuploadfpm
+description: A simple CAP project.
 version: 1.0.0
-description: "A simple CAP project."
+modules:
+- name: fileuploadfpm-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: fileuploadfpm-auth
+  - name: fileuploadfpm-db
+  - name: fileuploadfpm-destination
+  - name: fileuploadfpm-logging
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: fileuploadfpm-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: fileuploadfpm-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: fileuploadfpm-app-deployer
+  type: com.sap.application.content
+  path: gen
+  requires:
+  - name: fileuploadfpm-auth
+  - name: srv-api
+  - name: fileuploadfpm-html5-repo-host
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+      content-target: true
+  parameters:
+    config:
+      destinations:
+      - Authentication: NoAuthentication
+        HTML5.DynamicDestination: true
+        HTML5.ForwardAuthToken: true
+        Name: srv-api
+        ProxyType: Internet
+        Type: HTTP
+        URL: ~{srv-api/srv-url}
+  build-parameters:
+    build-result: app/
+    requires:
+    - artifacts:
+      - books.zip
+      name: fileuploadfpmbooks
+      target-path: app/
+    - artifacts:
+      - deadletterqueue.zip
+      name: deadletterqueue
+      target-path: app/
+- name: fileuploadfpmbooks
+  type: html5
+  path: app/books
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: notification-content-deployment
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: fileuploadfpm-destination
+  parameters:
+    disk-quota: 1GB
+    memory: 256MB
+    no-route: true
+    no-start: true
+    tasks:
+    - command: node node_modules/@cap-js/notifications/lib/content-deployment.js
+      disk-quota: 1GB
+      memory: 256MB
+      name: notification-content-deployment
+- name: fileuploadfpm-destinations
+  type: com.sap.application.content
+  requires:
+  - name: fileuploadfpm-auth
+    parameters:
+      service-key:
+        name: fileuploadfpm-auth-key
+  - name: fileuploadfpm-html5-repo-host
+    parameters:
+      service-key:
+        name: fileuploadfpm-html5-repo-host-key
+  - name: srv-api
+  - name: fileuploadfpm-destination
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: fileuploadfpm-html5-repository
+          ServiceInstanceName: fileuploadfpm-html5-repo-host
+          ServiceKeyName: fileuploadfpm-html5-repo-host-key
+          sap.cloud.service: fileuploadfpm.service
+        - Authentication: OAuth2UserTokenExchange
+          Name: fileuploadfpm-auth
+          ServiceInstanceName: fileuploadfpm-auth
+          ServiceKeyName: fileuploadfpm-auth-key
+          sap.cloud.service: fileuploadfpm.service
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: deadletterqueue
+  type: html5
+  path: app/deadletterqueue
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: fileuploadfpm-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      oauth2-configuration:
+        credential-types:
+        - binding-secret
+        - x509
+      tenant-mode: dedicated
+      xsappname: fileuploadfpm-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: fileuploadfpm-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: fileuploadfpm-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+    service: destination
+    service-plan: lite
+  requires:
+  - name: srv-api
+- name: fileuploadfpm-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+- name: fileuploadfpm-logging
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: application-logs
+    service-plan: lite
 parameters:
-  enable-parallel-deployments: true
   deploy_mode: html5-repo
+  enable-parallel-deployments: true
 build-parameters:
   before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
-modules:
-  - name: fileuploadfpm-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: fileuploadfpm-auth
-      - name: fileuploadfpm-db
-      - name: fileuploadfpm-destination
-      - name: fileuploadfpm-logging
-
-  - name: fileuploadfpm-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: fileuploadfpm-db
-
-  - name: fileuploadfpm-app-deployer
-    type: com.sap.application.content
-    path: gen
-    build-parameters:
-      build-result: app/
-      requires:
-        - name: fileuploadfpmbooks
-          artifacts:
-            - books.zip
-          target-path: app/
-    requires:
-      - name: fileuploadfpm-auth
-      - name: srv-api
-      - name: fileuploadfpm-html5-repo-host
-        parameters:
-          content-target: true
-          config:
-            HTML5Runtime_enabled: true
-    parameters:
-      config:
-        destinations:
-          - Name: srv-api
-            URL: ~{srv-api/srv-url}
-            Authentication: NoAuthentication
-            Type: HTTP
-            ProxyType: Internet
-            HTML5.ForwardAuthToken: true
-            HTML5.DynamicDestination: true
-
-  - name: fileuploadfpmbooks
-    type: html5
-    path: app/books
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm ci
-        - npm run build
-      supported-platforms:
-        []
-  - name: notification-content-deployment
-    type: nodejs
-    path: gen/srv
-    parameters:
-      no-route: true
-      no-start: true
-      memory: 256MB
-      disk-quota: 1GB
-      tasks:
-        - name: notification-content-deployment
-          command: "node node_modules/@cap-js/notifications/lib/content-deployment.js"
-          memory: 256MB
-          disk-quota: 1GB
-    requires:
-      - name: fileuploadfpm-destination
-    # provides:
-    #   - name: srv-api # required by consumers of CAP services (e.g. approuter)
-    #     properties:
-    #       srv-url: ${default-url}
-
-  - name: fileuploadfpm-destinations
-    type: com.sap.application.content
-    requires:
-      - name: fileuploadfpm-auth
-        parameters:
-          service-key:
-            name: fileuploadfpm-auth-key
-      - name: fileuploadfpm-html5-repo-host
-        parameters:
-          service-key:
-            name: fileuploadfpm-html5-repo-host-key
-      - name: srv-api
-      - name: fileuploadfpm-destination
-        parameters:
-          content-target: true
-    build-parameters:
-      no-source: true
-    parameters:
-      content:
-        instance:
-          existing_destinations_policy: update
-          destinations:
-            - Name: fileuploadfpm-html5-repository
-              ServiceInstanceName: fileuploadfpm-html5-repo-host
-              ServiceKeyName: fileuploadfpm-html5-repo-host-key
-              sap.cloud.service: fileuploadfpm.service
-            - Name: fileuploadfpm-auth
-              Authentication: OAuth2UserTokenExchange
-              ServiceInstanceName: fileuploadfpm-auth
-              ServiceKeyName: fileuploadfpm-auth-key
-              sap.cloud.service: fileuploadfpm.service
-
-resources:
-  - name: fileuploadfpm-auth
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: xsuaa
-      service-plan: application
-      path: ./xs-security.json
-      config:
-        xsappname: fileuploadfpm-${org}-${space}
-        tenant-mode: dedicated
-        oauth2-configuration:
-          credential-types:
-            - "binding-secret"
-            - "x509"
-  - name: fileuploadfpm-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
-  - name: fileuploadfpm-destination
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: destination
-      service-plan: lite
-    requires:
-      - name: srv-api
-
-  - name: fileuploadfpm-html5-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-plan: app-host
-  - name: fileuploadfpm-logging
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: application-logs
-      service-plan: lite
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production

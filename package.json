@@ -22,11 +22,25 @@
     "watch-books": "cds watch --open books/index.html?sap-ui-xx-viewCache=false --livereload false",
     "undeploy": "cf undeploy fileuploadfpm --delete-services --delete-service-keys --delete-service-brokers",
     "build": "rimraf resources mta_archives && mbt build --mtar archive",
-    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-deadletterqueue": "cds watch --open deadletterqueue/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "private": true,
   "cds": {
+    "outbox": {
+      "kind": "persistent-outbox"
+    },
     "requires": {
+      "OutboxTestService": {
+        "kind": "local"
+      },
+      "queue": {
+        "kind": "persistent-queue",
+        "maxAttempts": 100,
+        "storeLastError": true,
+        "legacyLocking": true,
+        "timeout": "1h"
+      },
       "db": "hana",
       "[production]": {
         "auth": "xsuaa"
@@ -44,6 +58,7 @@
     "app/*"
   ],
   "sapux": [
-    "app/books"
+    "app/books",
+    "app/deadletterqueue"
   ]
 }

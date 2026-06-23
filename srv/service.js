@@ -95,6 +95,29 @@ module.exports = cds.service.impl(function () {
                 description: "A New Excel file has been uploaded and processed successfully."
             })
             // Persist uploaded file metadata/content
+
+            // need to call an api which fails to test outbox behavior
+            // =====================================
+            // OUTBOX DEMO STARTS HERE
+            // =====================================
+            const outboxService = cds.queued(
+                await cds.connect.to('OutboxTestService')
+            );
+
+            await outboxService.simulateRemoteCall({
+                fileName: req.data.fileName || 'Books.xlsx',
+                recordCount: entries.length
+            });
+            // await outboxService.longRunningProcess({
+            //     fileName: req.data.fileName || 'Books.xlsx',
+            //     recordCount: entries.length
+            // });
+
+            console.log('Outbox message created');
+
+            // =====================================
+            // OUTBOX DEMO ENDS HERE
+            // =====================================
             return next();
 
         } catch (error) {

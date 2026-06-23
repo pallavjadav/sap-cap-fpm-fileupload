@@ -1,0 +1,163 @@
+{
+  "_version": "1.85.0",
+  "sap.app": {
+    "id": "deadletterqueue",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.27.0",
+      "toolsId": "e3e8305c-cceb-4fed-8782-d474f646059c"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/outbox-dead-letter-queue/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "DeadLetterQueue-manage": {
+          "semanticObject": "DeadLetterQueue",
+          "action": "manage",
+          "title": "{{DeadLetterQueue-manage.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.149.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "deadletterqueue.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "DeadOutboxMessagesList",
+          "target": "DeadOutboxMessagesList"
+        },
+        {
+          "pattern": "DeadOutboxMessages({key}):?query:",
+          "name": "DeadOutboxMessagesObjectPage",
+          "target": "DeadOutboxMessagesObjectPage"
+        }
+      ],
+      "targets": {
+        "DeadOutboxMessagesList": {
+          "type": "Component",
+          "id": "DeadOutboxMessagesList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/DeadOutboxMessages",
+              "variantManagement": "Page",
+              "navigation": {
+                "DeadOutboxMessages": {
+                  "detail": {
+                    "route": "DeadOutboxMessagesObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "GridTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "DeadOutboxMessagesObjectPage": {
+          "type": "Component",
+          "id": "DeadOutboxMessagesObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/DeadOutboxMessages"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "fileuploadfpm.service"
+  }
+}
