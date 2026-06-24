@@ -6,7 +6,7 @@ service OutboxDeadLetterQueueService {
     entity DeadOutboxMessages as projection on cds.outbox.Messages
         actions {
             action revive();
-            action delete();
+            action deleteQueue();
         };
 
 }

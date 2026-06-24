@@ -14,7 +14,7 @@ module.exports = cds.service.impl(function () {
         console.log('================================');
 
         // Fail first 3 times
-        if (attempts <= 19) {
+        if (attempts <= 8) {
             throw new Error(
                 `Simulated remote failure. Attempt ${attempts}`
             );

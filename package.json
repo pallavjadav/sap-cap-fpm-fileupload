@@ -36,10 +36,8 @@
       },
       "queue": {
         "kind": "persistent-queue",
-        "maxAttempts": 100,
-        "storeLastError": true,
-        "legacyLocking": true,
-        "timeout": "1h"
+        "maxAttempts": 9,
+        "storeLastError": true
       },
       "db": "hana",
       "[production]": {
