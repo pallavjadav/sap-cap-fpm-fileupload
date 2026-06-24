@@ -1,5 +1,6 @@
 using MyBooks as service from '../../srv/service';
 annotate service.Books with @(
+    UI.CreateHidden : true,
     UI.SelectionFields #filterBarMacro : [
         Genre,
         Title,

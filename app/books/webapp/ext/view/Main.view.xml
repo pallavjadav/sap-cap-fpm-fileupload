@@ -1,14 +1,29 @@
-<mvc:View xmlns:table="sap.fe.macros.table" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="books.ext.view.Main">
-    <Page id="Main" title="{i18n>MainTitle}">
-        <content>
-            <macros:FilterBar id="FilterBar" metaPath="/Books/@com.sap.vocabularies.UI.v1.SelectionFields#filterBarMacro" showClearButton="true" showMessages="true"/>
-            <macros:Table id="Table" metaPath="/Books/@com.sap.vocabularies.UI.v1.LineItem#tableMacro" filterBar="FilterBar" header="My Books" type="GridTable" selectionMode="ForceMulti">
+<mvc:View xmlns:table="sap.fe.macros.table" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="books.ext.view.Main" xmlns:f="sap.f">
+    <f:DynamicPage id="_IDGenDynamicPage" class="sapUiResponsiveContentPadding">
+        <f:title>
+            <f:DynamicPageTitle id="_IDGenDynamicPageTitle1">
+                <f:heading>
+                    <macros:VariantManagement id="vm" for="FilterBar,Table" showSetAsDefault="true" headerLevel="H2"/>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:header>
+            <f:DynamicPageHeader id="_IDGenDynamicPageHeader1" pinnable="false">
+                <VBox id="_IDGenVBox1">
+                    <macros:FilterBar id="FilterBar" metaPath="/Books/@com.sap.vocabularies.UI.v1.SelectionFields#filterBarMacro" showClearButton="true" showMessages="true"/>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+        <f:content>
+            <macros:Table id="Table" metaPath="/Books/@com.sap.vocabularies.UI.v1.LineItem#tableMacro" busy="{ui>/isBusy}" filterBar="FilterBar" header="My Books" selectionMode="ForceMulti" height="100%" showRowCount="true" initialLoad="true">
                 <macros:actions>
                     <table:Action text="Create" visible="true" key="create" press="create" id="createButton"/>
                     <table:Action text="ExcelUpload" visible="true" key="upload" press="upload" id="excelUpload"/>
                     <!-- <table:Action text="Mass Upload" visible="true" key="massupload" press="massupload" id="massupload" /> -->
+                    <table:Action id="edit-Main.controller" key="edit-Main.controller" text="Edit" press=".edit" anchor="upload" placement="After" requiresSelection="false" visible="{=!${ui>/isEditable}}"/>
+                    <table:Action id="display-Main.controller" key="display-Main.controller" text="Save" press=".display" anchor="upload" placement="After" requiresSelection="false" visible="{=${ui>/isEditable}}"/>
                 </macros:actions>
             </macros:Table>
-        </content>
-    </Page>
+        </f:content>
+    </f:DynamicPage>
 </mvc:View>

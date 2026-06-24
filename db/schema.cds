@@ -1,14 +1,14 @@
 namespace fileupload;
 
-using { cuid } from '@sap/cds/common';
+using {cuid} from '@sap/cds/common';
 
 
 entity Books {
-    key ID     : Integer @title : 'ID';
-        Title  : String(100)@title : 'Title';
-        Author : String(100)@title : 'Author';
-        Genre  : String(50)@title : 'Genre';
-        Price  : Decimal(10, 2)@title : 'Price';
+    key ID     : Integer        @title: 'ID';
+    key Title  : String(100)    @title: 'Title';
+        Author : String(100)    @title: 'Author';
+        Genre  : String(50)     @title: 'Genre';
+        Price  : Decimal(10, 2) @title: 'Price';
 }
 
 

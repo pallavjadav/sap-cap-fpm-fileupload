@@ -20,7 +20,16 @@ sap.ui.define(
             },
             upload: function () {
                 this.getAppComponent().getRouter().navTo("Files");
+            },
+            edit: function() {
+                console.log("edit");
+                this.getAppComponent().getModel("ui").setProperty("/isEditable", true);
+            },
+            display: function() {
+                console.log("display");
+                this.getAppComponent().getModel("ui").setProperty("/isEditable", false);
             }
+            
             /**
              * Called when a controller is instantiated and its View controls (if available) are already created.
              * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
