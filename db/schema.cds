@@ -2,6 +2,11 @@ namespace fileupload;
 
 using {cuid} from '@sap/cds/common';
 
+using {sap.common.CodeList} from '@sap/cds/common';
+
+entity AvailabilityStatus : CodeList {
+    key code : String(1);
+}
 
 entity Books {
     key ID     : Integer        @title: 'ID';
@@ -9,6 +14,7 @@ entity Books {
         Author : String(100)    @title: 'Author';
         Genre  : String(50)     @title: 'Genre';
         Price  : Decimal(10, 2) @title: 'Price';
+        currentlyAvailableStatus : Association to AvailabilityStatus @title : 'Currently Available Status';
 }
 
 

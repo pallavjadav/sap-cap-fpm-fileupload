@@ -31,6 +31,10 @@ annotate service.Books with @(
             Value : Price,
             Label : '{i18n>Price}',
         },
+        {
+            $Type : 'UI.DataField',
+            Value : currentlyAvailableStatus,
+        },
     ],
 );
 

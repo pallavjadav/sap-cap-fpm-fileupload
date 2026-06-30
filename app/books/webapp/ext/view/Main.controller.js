@@ -14,7 +14,7 @@ sap.ui.define(
 
                 this.editFlow.createDocument(listBinding, {
                     creationMode: "CreationDialog",
-                    creationDialogFields: ["ID", "Title", "Author", "Genre", "Price"]
+                    creationDialogFields: ["ID", "Title", "Author", "Genre", "Price","currentlyAvailableStatus"]
 
                 });
             },
